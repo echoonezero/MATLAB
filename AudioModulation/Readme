@@ -1,0 +1,9 @@
+This is a simple project describing modulation and adding a watermark to an audio file. The watermark can be used to prove ownership of the file.
+
+moon1.wav is the main file to which carol1.wav is added as a watermark.
+
+The process is as follows:
+Modulate carol1.wav to a frequency greater than twice the frequency of moon1.wav. Scale the modulated signal to 1/1000th of amplitude because we need the frequency component to exist as a watermark but it should not be heard when added to moon1.wav.
+Add the scaled signal to moon1.wav.
+
+The spectrum of each audio file is available as well to know the frequency band of each audio signal.
