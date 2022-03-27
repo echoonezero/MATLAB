@@ -1,0 +1,7 @@
+%--------To add carol1.wav as an audio watermark to moon1.wav-------------
+%--------Modulate carol1.wav to 18Khz and add 
+
+[moon,fsm] = audioread("moon1.wav");
+%pspectrum(moon,fsm)
+[carol,fsc] = audioread("carol1.wav");
+
