@@ -1,0 +1,43 @@
+%Improving PSD estimate: welch's method.
+%load fr, fs, sig and n from previous file
+w = ones(n,1)
+nfft = 2^12
+numoverlap = 0
+pwelch(sig, w, numoverlap, nfft, fs)
+
+%Welch's power spectral density estimate using the default values
+pwelch(sig, [], [], [], fs)
+
+%with default values, pwelch() is same as periodogram(). Using numoverlap decreases the widh of main lobes in the spectrum plot. Use a periodogram to produce better results for a signal with low noise. If signal is noisy,adding %overlap to the windows with Welch's method will be helpful.
+
+%The above was for non-varying frequencies. If frequencies of the signal varies wrt time, apply different windows for differnet overlapping sections fo the signal. Considering the same fan signal:
+n = length(monitoredfan)
+%first use welch's methos with default values and see the spectrum
+pwelch(monitoredfan, [],[],[],fs)
+
+%In the spectrum, we can't tell what time any of these frequencies occurred. The spectrogram can help to find what time the fan stopped working properly.
+spectrogram(monitoredfan, ones(n,1), [], 2^12, fs)
+
+%The window is the same length as the signal, so it isn't divided before the spectrum is calculated. To see how the signal changes over time, use a smaller window.
+spectrogram(monitoredfan, [], [], [], fs)
+
+spectrogram(monitoredfan, [], [], [], fs, "yaxis") % this hsows that the signal was divided into eight segments
+
+%Let us decrease the window size to improve the time resolution. Unfortunately, this will also decrease the frequency resolution.
+w = kaiser(2048, 19)
+spectrogram(monitoredfan,w,[],[],fs)
+colormap jet  %easier to see that there are three tones
+ylim([2 3])		%zoom in to region od specific interest between 2 to 3 minutes. Te zoomed plot shows that freq changed at 2.5 minutes
+
+%Spectrogram Matrix. Read outputs of spectrogram function to variables. s and ps are both matrices of the same size. For both matrices, time increases across the columns and frequency increases down the rows, starting from zero
+[s,f,t,ps] = spectrogram(monitoredfan,kaiser(2048,19),[],[],fs)
+firstslice = ps(:,1)
+plot(f,10*log10(firstslice))
+lastslice = ps(:,end)
+plot(f,10*log10(lastslice))
+
+
+
+
+
+
