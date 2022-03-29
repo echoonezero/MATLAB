@@ -1,0 +1,16 @@
+%Characterizing Digital Filters. Underwater Sound Absorption. Download whale sound from https://freesound.org/people/MBARI_MARS/sounds/498708/
+%IIR filter and FIR filter on whale sound
+
+[whaley,fs] = audioread("whalesound.wav");
+t = (0:numel(whaley)-1)'/fs;
+plot(t,whaley)
+xlabel("Time (sec)")
+biir = [0.5 0.25];
+aiir = [1 -0.1];
+bfir = [0.2 0.5 0.2];
+whaleiir = filter(biir, aiir, whaley)
+whalefir = filter(bfir, 1, whaley)		%coefficient "a" is 1 in FIR
+pwelch([whaley, whalefir], [], [], [], fs)
+
+
+

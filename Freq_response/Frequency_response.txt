@@ -1,0 +1,29 @@
+%Compute Frequency Response
+[whaley,fs] = audioread("whalesound.wav");
+b = [0.2 0.5 0.2];
+whalefilt = filter(b,1,whaley);
+pwelch([whaley whalefilt],[],[],[],fs);
+freqz(b, 1, 4096, fs)	%frequency response of a digital filter using the freqz function, which is based on the FFT operation
+
+%The group delay is the negative first derivative of the phase response, and it shows you the delay introduced by the filter at each frequency in units of samples. If the phase response is linear, like this filter, the group delay is constant, and the signal is delayed by the same number of samples. The inputs are the same as freqz.
+grpdelay(b,1,512,fs)
+%The group delay plot shows that the filtered signal is delayed by one sample. The Filter Visualization Tool is a convenient way to see different characteristics of your filter. fvtool(biir, aiir, bfir, 1, "Fs", fs) is the function to visualize both FIR and IIR response in a single plot.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

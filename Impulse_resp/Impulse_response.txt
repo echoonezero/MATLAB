@@ -1,0 +1,29 @@
+%Computing Impulse response
+[whaley,fs] = audioread("whalesound.wav");
+biir = [0.5 0.25];
+aiir = [1 -0.1];
+bfir = [0.2 0.5 0.2];
+whalefilt = filter(biir,aiir,whaley);
+
+%display the first n samples of the impulse response of a digital filter using the impz function. Impulse response of IIR filter is infinite hence all values cannot be used in analysis
+impz(biir, aiir, 15, fs)
+[h, t] = impz(biir, aiir, 5, fs)	%taking only 5 values as the IIR filter is settling to zero from 5th value
+whaleconv = conv(whaley, h)		%convolving impulse response of IIR filter with input sig
+
+%With FIR filters, the impulse response is the same as the coefficient vector b
+whaleconvfir = conv(whaley, bfir)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
