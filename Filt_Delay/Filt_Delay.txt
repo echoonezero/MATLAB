@@ -1,0 +1,37 @@
+%Reduce FIR Filter Delay
+[whaley,fs] = audioread("whalesound.wav");
+n = numel(whaley);
+fr = (0:n-1)*(fs/n);
+fr = fr(1:n/2+1);
+waterabs = absorption(fr);
+f = fr/fs*2;
+b = fir2(10,f,waterabs);
+
+%FIR filters are often used because of their stability. If the filter is designed as a linear phase filter and the filter order is high, it introduces a significant delay. If linear phase is not important to the application, reduce the delay by converting the linear phase filter to a minimum phase filter. This is accomplished by moving the zeros and poles inside the unit circle.
+[z,p] = tf2zpk(b)
+zplane(z,p)
+
+%The polystab function creates a minimum phase filter by reflecting all zeros of the polynomial that are outside the unit circle to inside the unit circle. Normalize the coefficients so that the magnitude response doesn't change.
+bmin = polystab(b)
+bmin = bmin * norm(b)/norm(bmin)
+
+[z,p] = tf2zpk(bmin)
+zplane(z,p)			%The poles are now within the unit circle
+
+grpdelay(b,1,[],fs)
+hold on
+grpdelay(bmin,1,[],fs)		%plot the group delay of original and min phase filtered signals to compare the reduction in filter delay
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,47 @@
+%compensate for group delay
+[whaley,fs] = audioread("whalesound.wav");
+b = [0.2 0.5 0.2];
+whalefilt = filter(b,1,whaley);
+n = numel(whaley);
+t = (0:n-1)'/fs;
+plot(t,whaley)
+hold on
+plot(t,whalefilt)
+hold off
+xlim([0 0.001])
+legend(["whaley" "whalefilt"])
+gd = grpdelay(b,1,[],fs)
+delay = gd(1)
+
+%shift the filtered signal to the left by deleting the appropriate number of samples
+whalefilt(1:delay) = []
+
+% create a time vector with the same number of elements
+tadj = t(1:end-delay)
+
+%new plot for aligned signals
+plot(t,whaley)
+hold on
+plot(tadj,whalefilt)
+hold off
+xlim([0 0.001])
+legend(["whaley" "whalefilt"])
+
+%Zero phase filtering:  All IIR filters, and some FIR filters, do not have linear phase, so instead, use a technique called anti-causal, zero-phase filtering. The inputs and outputs are the same as with the filter function:
+a = [1 -0.1];
+grpdelay(b,a,[],fs)		%observe that the delay is varying and not constant as before
+whalefilt = filtfilt(b,a,whaley);
+plot(t,whaley)
+hold on
+plot(t,whalefilt)
+hold off
+xlim([0 0.001])
+legend(["whaley" "whalefilt"],"Location","best")
+
+
+
+
+
+
+
+

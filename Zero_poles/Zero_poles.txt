@@ -1,0 +1,32 @@
+%FIR Zeros Poles plot
+[whaley,fs] = audioread("whalesound.wav");
+biir = [0.5 0.25];
+aiir = [1 -0.1];
+bfir = [0.2 0.5 0.2];
+
+%The tf2zpk function converts from b and a coefficient vectors to zero-pole-gain form
+[z,p,k] = tf2zpk(bfir, 1)		%Z=zeros, p=poles, k=gain
+zplane(z,p)		%plot zeros poles in Z plane
+
+
+%IIR Zeros Poles plot
+[whaley,fs] = audioread("whalesound.wav");
+biir = [0.5 0.25]
+biir = [1 -0.1]
+freqz(biir,aiir,[],fs)		%View frequency response
+
+[z,p,k] = tf2zpk(biir,aiir);
+zplane(z,p)				%Zero pole plot
+
+max(abs(p))		%View largest pole value. max(abs(p)) should be less than 1.
+
+whalefilt = filter(biir,aiir,whaley);
+plot(whaley)
+hold on
+plot(whalefilt)
+hold off
+legend("original","filtered")
+
+
+
+

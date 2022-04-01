@@ -1,0 +1,26 @@
+%Arbitrary Filter Response
+[whaley,fs] = audioread("whalesound.wav");
+n = numel(whaley);
+fr = (0:n-1)*(fs/n);
+fr = fr(1:n/2+1);
+waterabs = absorption(fr);
+fabs = fr/fs*2;
+
+%The fir2 function designs arbitrarily shaped FIR filters using the windowing method. By default, the function uses a Hamming window. Design a 10th-order FIR underwater absorption filter using waterabs as the desired magnitudes.
+b = fir2(10, fabs, waterabs)
+a = 1
+
+whalefilt = filter(b,a,whaley);
+
+%Calculate the 512-point frequency response of the absorption filter
+[h,f] = freqz(b,a,512, fs)
+
+plot(fr, waterabs, f, abs(h))		%looks like it is not a great match. Increase the order to 30 and try again.
+
+%Recalculate the coefficient vectors b and a so that they contain a 10-order IIR underwater absorption filter. The yulewalk function is the IIR counterpart to the fir2 function. It uses the same inputs, but has two outputs because the IIR filter will also have a coefficients.
+
+b = fir2(30,fabs,waterabs);
+[b,a] = yulewalk(10,fabs,waterabs);
+whalefilt = filter(b,a,whaley)			%from here same as above...
+[h,f] = freqz(b,a,512, fs)
+plot(fr, waterabs, f, abs(h))

@@ -1,0 +1,42 @@
+%Filter responses of Antialiasing filter
+fs = 4000;
+t = 0:1/fs:0.5;
+sig = sin(2*pi*1900*t);		%generate a signal with one tone at 1900 Hz
+periodogram(sig,kaiser(numel(sig),19),2^12,fs)
+
+sigup = resample(sig,6,1)
+fsup = fs*6;
+w = kaiser(numel(sigup),19);
+periodogram(sigup,w,[],fsup)
+xline(fs/2/1000,"m--")			% interpolate the signal and plots the new power spectrum
+
+[sigup, b] = resample(sig,6,1)	%look at the magnitude response of the filter. Get the coefficients of the antialising filter used by resample to look at the filter characteristics.
+
+%Plot the magnitude and phase response of the antialiasing filter
+freqz(b,1,[],fsup)
+
+% the image is located near 2000 Hz, you need a steeper filter to remove the image. To improve the approximation of the filter, you can increase its order.  Use the filtord function, which returns the filter order:
+ord = filtord(b)
+
+% Resample the signal sig again, but this time, use a value of 30 for n so that the filter order is 360.
+[sigup2, b2]  = resample(sig, 6, 1, 30)
+freqz(b2,1,[],fsup)
+periodogram(sigup2,w,[],fsup)		%we see that the magnitude of 2100 Hz is lesser (-60dB). But with higher order filter, delay is also more.
+
+%Compare the group delay of both antialising filters on the same plot
+grpdelay(b,1,[],fsup)
+hold on
+grpdelay(b2,1,[],fsup)
+hold off
+
+
+
+Notes:
+Function			Description						Example
+freqz			magnitude and phase response		freqz(b,a,n,fs)
+impz			impulse response					impz(b,a,n,fs)
+grpdelay		group delay response				grpdelay(b,a,n,fs)
+tf2zpk
+zplane			zero-pole plot						[z,p] = tf2zpk(b,a)
+zplane(z,p)
+fvtool			Filter Visualization Tool			fvtool(b,a,"Fs",fs)

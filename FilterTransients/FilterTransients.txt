@@ -1,0 +1,27 @@
+%removing filter transients at the beginning of filtered signal
+[flute,fs] = audioread("NoisyFlute.wav");
+flute = flute(1:3*fs);
+t = ((0:numel(flute)-1)/fs)';
+yin = chirp(t,2200,t(end),2500);
+marked = flute + yin*0.0005;
+designedFIR = designfilt("bandpassfir", ...
+    "StopbandFrequency1",2100,"PassbandFrequency1",2200, ...
+    "PassbandFrequency2",2500,"StopbandFrequency2",2600, ...
+    "StopbandAttenuation1",60,"PassbandRipple",1, ...
+    "StopbandAttenuation2",60,"SampleRate",fs)
+yfir = filter(designedFIR,marked);
+
+o = filtord(designedFIR)		%get the filter order
+
+%For FIR filters, the order also determines the size of the filter transient. Calculate the first 500 samples of the impulse response of the bandpass FIR filter.
+[hi, ti] = impz(designedFIR, 500, fs)
+plot(ti, hi)
+
+%Save the time, in seconds, of the filter transient's last sample
+tc = t(o(end))
+
+%Plot the filtered signal yfir versus time t. Then add a vertical line at tc
+plot(t, yfir)
+xline(tc)
+
+
